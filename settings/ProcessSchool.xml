@@ -1,0 +1,33 @@
+﻿<ProcessSchool>
+	<version>1</version>
+	<useopen>false</useopen>
+	<includesub>true</includesub>
+	<source>C:\Users\Sam\Desktop\School</source>
+	<open>false</open>
+	<saveinsame>true</saveinsame>
+	<dest></dest>
+	<jpeg>true</jpeg>
+	<psd>false</psd>
+	<tiff>false</tiff>
+	<lzw>false</lzw>
+	<converticc>false</converticc>
+	<q>3</q>
+	<imagecount>6</imagecount>
+	<max>true</max>
+	<jpegresize>false</jpegresize>
+	<jpegw></jpegw>
+	<jpegh></jpegh>
+	<psdresize>false</psdresize>
+	<psdw></psdw>
+	<psdh></psdh>
+	<tiffresize>false</tiffresize>
+	<tiffw></tiffw>
+	<tiffh></tiffh>
+	<runaction>false</runaction>
+	<actionset>Default Actions</actionset>
+	<action>Vignette (selection)</action>
+	<info></info>
+	<icc>true</icc>
+	<keepstructure>false</keepstructure>
+	<watermark>Return by Monday</watermark>
+</ProcessSchool>
