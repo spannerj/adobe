@@ -1,19 +1,13 @@
-﻿#target indesign
+﻿g_initParams = {
+    
+    initParams: function(){         
+        return initialiseParmeters ();
+    }
+};
 
-$.evalFile(new File("c:/Adobe/scripts/readXML.jsx"));
+//initialise the main parameters to default values
+function initialiseParmeters() {
 
-app.open("C:\\A4Template.indd")
-var gP = new Processor();
-var strTitle = "Process School";
-g_script_XMLFunctions.ReadXMLFile(gP.params);
-
-alert(gP.params["watermark"]);
-alert(gP.params["source"]);
-  
-// the main class
-function Processor() {
-
-    this.InitParams = function() {
 		var params = new Object();
 		params["version"] = 1;
 		params["useopen"] = false;
@@ -47,7 +41,4 @@ function Processor() {
 		params["keepstructure"] = false;
          params["watermark"] = "Return by";
 		return params;
-	}
-    
-    this.params = this.InitParams();
 }

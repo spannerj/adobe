@@ -1,21 +1,30 @@
 ﻿var errorArray = [];
 
-function folder_check(parentFolder){
+//folder_check('C:\\Users\\Sam\\Desktop\\Compton', 6);
 
-    var myFolder = new Folder(parentFolder);
+g_FolderCheck = {
+    
+    folderCheck: function(schoolPath, imageCount){         
+        return folder_check (schoolPath, imageCount);
+    }
+};
+
+function folder_check(schoolPath, imageCount){
+
+    var editedFolder = new Folder(schoolPath + '\\Edited');
     
     //exit if no folder set
-    if (myFolder == null)
+    if (editedFolder == null)
     {
          return;
     }
     
     //remove any existing errors folder
-    var f = new File(myFolder + '//' + 'errors.txt');    
+    var f = new File(schoolPath + '//' + 'errors.txt');    
     f.remove();
     
     //get folders under selected folder
-    var classArray = myFolder.getFiles(onlyFolders); 
+    var classArray = editedFolder.getFiles(onlyFolders); 
     
     //loop over each folder checking for presence of JPG folder with 6 images inside
     for (var i = 0; i < classArray.length; i++)  
@@ -40,15 +49,20 @@ function folder_check(parentFolder){
                     //no jpg folder so add to error array
                     if (jpgFolder == '')
                     {
-                        errorArray.push(folderName);
+                        errorArray.push(folderName+ " - missing jpg folder");
                     } 
                     else
                     {
                         //jpg folder found so now count the jpgs
-                        if ( checkFolderCount(jpgFolder) || checkFolderCount(picFolder) )
+                        if ( checkFolderCount(jpgFolder, imageCount) )
                         {
-                            errorArray.push(folderName);
+                            errorArray.push(folderName + " - incorrect number of files in jpg folder");
                         }    
+                        //jpg folder found so now count the jpgs
+                        if ( checkFolderCount(picFolder, imageCount) )
+                        {
+                            errorArray.push(folderName + " - incorrect number of files in edited folder");
+                        }  
                     }
                 } //end if instance of pupil folder
             } //loop pupil array
@@ -64,7 +78,7 @@ function folder_check(parentFolder){
             //store file name in message ready for alert and remove all spaces
             msg = msg + '\n' + errorArray[i].replace(/%20/g,' ');
             //add file name to the error file
-            writeToErrorFile (errorArray[i].replace(/%20/g,' '), myFolder);
+            writeToErrorFile (errorArray[i].replace(/%20/g,' '), schoolPath);
         }
 
         alert(msg);
@@ -77,9 +91,9 @@ function folder_check(parentFolder){
     }
 };
 
-function checkFolderCount(parentFolder){          
+function checkFolderCount(schoolPath, imageCount){          
     // Create new folder object based on path string  
-    var folder = new Folder(parentFolder);  
+    var folder = new Folder(schoolPath);  
     var filesArray = new Array();
 
     // Get all files in the current folder  
@@ -103,8 +117,8 @@ function checkFolderCount(parentFolder){
         }      
     } //end for
 
-    //if count doesn't = 6 return a false
-    if ( filesArray.length != 6 ){
+    //if count doesn't = imageCount return a false
+    if ( filesArray.length != imageCount ){
         return true
     }
     else

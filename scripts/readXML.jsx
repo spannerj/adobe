@@ -1,7 +1,7 @@
 ﻿g_script_XMLFunctions = {
     
-    ReadXMLFile: function(params){
-            LoadParamsFromDisk (GetDefaultParamsFile(), params);
+    ReadXMLFile: function( params, strTitle ){
+            LoadParamsFromDisk ( GetDefaultParamsFile(), params, strTitle );
             return params
     }
 
@@ -20,11 +20,11 @@
 	// load my params from the xml file on disk if it exists
 	// this.params["myoptionname"] = myoptionvalue
 	// I wrote a very simple xml parser, I'm sure it needs work
-    function LoadParamsFromDisk(loadFile, params){
+    function LoadParamsFromDisk(loadFile, params, strTitle){
 		if ( loadFile.exists ) {
 			loadFile.open( "r" );
 			var projectSpace = ReadHeader( loadFile );
-			if ( projectSpace == GetScriptNameForXML() ) {
+			if ( projectSpace == GetScriptNameForXML(strTitle) ) {
 				while ( ! loadFile.eof ) {
 					var starter = ReadHeader( loadFile );
 					var data = ReadData( loadFile );
@@ -50,7 +50,7 @@
     // NOTE: you can't save certain characters in xml, strip them here
     // this list is not complete
     ///////////////////////////////////////////////////////////////////////////////
-    function GetScriptNameForXML() {
+    function GetScriptNameForXML(strTitle) {
         var scriptNameForXML = new String( strTitle );
         var charsToStrip = Array( " ", "'", "." );
         for (var a = 0; a < charsToStrip.length; a++ )  {

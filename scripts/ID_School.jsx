@@ -1,19 +1,34 @@
-﻿#include Check_Indesign.jsx
-#include utils.jsx
+﻿//#include Check_Indesign.jsx
+//#include utils.jsx
 
 $.evalFile(new File("c:/Adobe/scripts/readXML.jsx"));
 $.evalFile(new File("c:/Adobe/scripts/utils.jsx"));
+$.evalFile(new File("c:/Adobe/scripts/initParms.jsx"));
+$.evalFile(new File("c:/Adobe/scripts/checkSchool.jsx"));
 
 var count = 1;
 var pdfName = '';
 var newjpgfolder ='';
 
-//initialize processor (including parms)
-var gP = new Processor();
-var strTitle = "Process School";
+process();
 
-//read in parameters from xml file
-g_script_XMLFunctions.ReadXMLFile(gP.params);
+function process(){
+    
+    //initialize processor (including parms)
+    var gP = new Processor();
+    var strTitle = "Process School";
+
+    //read in parameters from xml file
+    g_script_XMLFunctions.ReadXMLFile(gP.params, strTitle);
+
+    //check image counts 
+    if ( g_FolderCheck.folderCheck( gP.params["source"], gP.params["imagecount"] ) )
+    {
+        return;
+    }
+
+}
+
 
 //set up all required folders
 //output folder
@@ -22,48 +37,11 @@ g_script_XMLFunctions.ReadXMLFile(gP.params);
 
 
 function Processor() {
-
-    this.InitParams = function() {
-		var params = new Object();
-		params["version"] = 1;
-		params["useopen"] = false;
-		params["includesub"] = false;
-		params["source"] = "";
-		params["open"] = false;
-		params["saveinsame"] = true;
-		params["dest"] = "";
-		params["jpeg"] = true;
-		params["psd"] = false;
-		params["tiff"] = false;
-		params["lzw"] = false;
-		params["converticc"] = false;
-		params["q"] = 5;
-         params["imagecount"] = 6;
-		params["max"] = true;
-		params["jpegresize"] = false;
-		params["jpegw"] = "";
-		params["jpegh"] = "";
-		params["psdresize"] = false;
-		params["psdw"] = "";
-		params["psdh"] = "";
-		params["tiffresize"] = false;
-		params["tiffw"] = "";
-		params["tiffh"] = "";
-		params["runaction"] = false;
-		params["actionset"] = "";
-		params["action"] = "";
-		params["info"] = "";
-		params["icc"] = true;
-		params["keepstructure"] = false;
-         params["watermark"] = "Return by";
-		return params;
-	}
-    
-    this.params = this.InitParams();
+    this.params = g_initParams.initParams();
 }
 
 
-main();
+//main();
 
 function main(){
 
