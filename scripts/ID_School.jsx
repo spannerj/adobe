@@ -1,4 +1,5 @@
-﻿//#include Check_Indesign.jsx
+﻿#target indesign
+//#include Check_Indesign.jsx
 //#include utils.jsx
 
 $.evalFile(new File("c:/Adobe/scripts/readXML.jsx"));
@@ -20,24 +21,177 @@ function process(){
 
     //read in parameters from xml file
     g_script_XMLFunctions.ReadXMLFile(gP.params, strTitle);
+    
+    //populate folders and folder parms
+    gP.setUpFolders();
 
-    //check image counts 
-    if ( g_FolderCheck.folderCheck( gP.params["source"], gP.params["imagecount"] ) )
-    {
-        return;
-    }
+    //check image counts and finish if incorrect
+    if ( g_FolderCheck.folderCheck( gP.params["source"], gP.params["imagecount"] ) )  {  return;  }
 
+    //process classes in school
+    gP.processSchool();
+    
+    alert('Finished!');
 }
 
-
-//set up all required folders
-//output folder
-//internet folder
 
 
 
 function Processor() {
     this.params = g_initParams.initParams();
+    
+    this.setUpFolders= function() { 
+        //set up all required folders
+        //output folder
+        var outputFolder = new Folder( this.params["source"] + '//Output'  );
+        if (!outputFolder.exists) outputFolder.create();    
+        this.params['outputfolder'] = outputFolder.fsName;
+        
+        //internet folder
+        var internetFolder = new Folder( this.params["source"] + '//Internet'  );
+        if (!internetFolder.exists) internetFolder.create();
+        this.params['internetfolder'] = internetFolder.fsName;
+        
+        //print folder
+        var printFolder = new Folder( this.params["source"] + '//Print'  );
+        if (!printFolder.exists) printFolder.create();    
+        this.params['printfolder'] = printFolder.fsName;
+    }
+
+    this.processSchool = function(){
+        //pick a class at a time
+        // Create new folder object based on path string  
+        var editedFolder = new Folder( this.params['source'] + '//Edited' );  
+
+        // Get everything in the top folder  
+        var classArray = editedFolder.getFiles(onlyFolders);     
+        
+         // Loop over the folders and files 
+         for (var i = 0; i < classArray.length; i++)  
+         { 
+              //  ignore files and loop through folders
+              if (classArray[i] instanceof Folder)  
+              {  
+                  //save class name
+                 this.params['classname'] = classArray[i].name;
+                  
+                  //look for pupil folders inside class
+                  var classFolder = new Folder(classArray[i]);
+                  
+                  //get all pupils in the class
+                  var pupilArray = classFolder.getFiles(onlyFolders);    
+                  
+                  //loop over class folder getting pupil folders
+                  for (var j = 0; j < pupilArray.length; j++)
+                  {
+                      //  ignore files and loop through folders
+                      if (pupilArray[i] instanceof Folder)  
+                      {  
+                          //save pupil name
+                          this.params['pupilname'] = pupilArray[i].name;     
+                          
+                          //look for pupil folders inside class
+                          var pupilFolder = new Folder(pupilArray[i]);
+                          this.params['jpgfolder']  = pupilFolder.getFiles("JPEG");         
+                        //  this.params['jpgfolder'] = jpgf[0];
+                          
+                          app.open("C:\\Adobe\\templates\\A4Template.indd");  
+                          
+                          //loop over pictures placing them in the template
+                          this.processFiles ();
+                      }
+                  }
+             }
+         }
+    }
+
+    this.processFiles = function(){
+          
+          //create random password for internet folders
+          this.params['rand'] = randomString(3);        
+        
+          // Create new folder object based on path string  
+         var jpgFolder = new Folder( this.params['jpgfolder'] );  
+         var filesArray = new Array();
+      
+         // Get all files in the current folder  
+         var files = jpgFolder.getFiles();  
+         this.params['ref'] = this.params['pupilname'].replace('%20',' ');
+        
+         // Loop over the files in the files object  
+         for (var i = 0; i < files.length; i++)  
+         {  
+              // Check if the file is an instance of a file   
+              if (files[i] instanceof File)  
+              {   
+                   // Convert the file object to a string for matching purposes (match only works on String objects)  
+                   var fileString = String(files[i]);  
+      
+                   // Check if the file contains the right extension  
+                   if ( fileString.match(/.(jpg)$/i) || fileString.match(/.(CR2)$/i) )  
+                   {  
+                        // Place the images to be used in the template in an array  
+                        filesArray.push(fileString);
+                   }  
+              }  
+         }      
+        
+        //pass files array and place files
+        this.placeFiles ( filesArray )
+
+        pw = this.params['ref']+ this.params['rand'];
+        writeToFile (this.params['ref'] + ' - ' + pw, this.params['source'] + '\\' + this.params['class'] + '\\' + this.params['pupilname']);
+        //deleteFiles(filesArray); 
+        //folder.remove();            
+    }
+
+    this.placeFiles = function( filesArray ){
+        var doc = app.activeDocument;      
+
+         for (j=0; j<6; j+=1)
+         {            
+            var f = new File(filesArray[j]);  
+            doc.pages[0].rectangles[j].place(f, false);  
+            doc.pages[0].rectangles[j].images[0].select();
+            sel = doc.selection[0];
+            var h = sel.geometricBounds[2] - sel.geometricBounds[0];
+            var w = sel.geometricBounds[3] - sel.geometricBounds[1] ;
+            if (w > h)
+            {
+                sel.rotationAngle = 90;
+            }
+            doc.pages[0].rectangles[j].images[0].fit(FitOptions.CONTENT_TO_FRAME); 
+
+            //move files into a  class folder in internet  with a _TIF_PEFN suffix
+            var newFolderName = this.params['ref'] + this.params['rand'];
+            var destinationFolder = new Folder(this.params['internetfolder'] + "\\" + this.params['classname'] + "_TIF_PEFN" + "\\" + newFolderName);
+
+            var jpgFolder = new Folder( this.params['internetfolder'] + this.params['internetfolder'].substring(this.params['internetfolder'].lastIndexOf('\\') ) +  this.params['classname'] + '_TIF_PEFN'  + "\\" + newFolderName);
+
+            if (!destinationFolder.exists) destinationFolder.create();
+
+            //copy file to internet folder
+            f.copy(destinationFolder + "\\" +f.displayName);
+         }
+
+         var allTextFrames = doc.textFrames;
+         for (j=0; j<6;j+=1)
+        {        
+            var tf = allTextFrames[j];          
+            tf.contents = this.params['watermark']
+        }
+        pw = newFolderName.replace('%20',' ');
+        var tf = allTextFrames[6];
+        tf.contents = this.params['ref'].replace('%20',' ');
+        
+        var refFrame = allTextFrames[7];
+        refFrame.contents = pw;
+        
+        //store ref for filename
+        pdfName = this.params['ref'];
+        
+        exportPDF(this.params['outputfolder']);        
+    }
 }
 
 
@@ -45,15 +199,6 @@ function Processor() {
 
 function main(){
 
-    storedSettings = getStoredSettings();
-    
-    var settings = getSettings(storedSettings.watermark, storedSettings.startFolder, storedSettings.outputFolder);
-   
-    if ( folder_check( storedSettings.startFolder ) )
-    {
-        return;
-    }
-   
     //create new folder for jpg folders to be moved to
     var f = new Folder(settings.startFolder + '_TIF_PEFN');
     var jpgFolder = new Folder( settings.outputFolder + settings.startFolder.substring(settings.startFolder.lastIndexOf('\\') ) +  '_TIF_PEFN' );
@@ -184,7 +329,7 @@ function deleteFiles(filesArray){
     }
 }
 
-function placeFiles(filesArray, watermark, ref, output, rand, startPath){
+function placeFiles2(filesArray, watermark, ref, output, rand, startPath){
 
     var doc = app.activeDocument;      
 
