@@ -5,7 +5,7 @@ g_ProcessSchool = {
         return main ();
     }
 };
-
+main();
 function main(){
     $.evalFile(new File("c:/Adobe/scripts/readXML.jsx"));
     $.evalFile(new File("c:/Adobe/scripts/initParms.jsx"));
@@ -34,7 +34,7 @@ function main(){
 
             gIP.SaveParamsToDisk( GetDefaultParamsFile() );
 
-            //gIP.Execute();
+            gIP.Execute();
         
             CallIndesign (gIP);
             
@@ -846,7 +846,7 @@ function ImageProcessor() {
 		l.grpWatermark.alignChildren = 'center';
 
 		d.stWatermark = l.grpWatermark.add( 'statictext', undefined, strWatermark );
-		d.stWatermark.helpTip = strWatermarkHelp;
+		d.stWatermark.helpTip = strWatermarkHelp; 
         
          d.hidden6 = l.grpCopyright.add( 'edittext' );
 		d.hidden6.preferredSize.width = 1;
@@ -856,6 +856,23 @@ function ImageProcessor() {
 		d.etWatermark.helpTip = strWatermarkHelp;
 		d.etWatermark.alignment = 'fill';
 		d.etWatermark.preferredSize.width = actionDropDownLength * 2;
+               
+         ///////////////////////////////////////////////////////////////////////////
+         l.grpTemplate = l.grp4Info.grpLeft.add( 'group' );
+		l.grpTemplate.orientation = 'row';
+		l.grpTemplate.alignChildren = 'center';
+        
+		d.stTemplate = l.grpTemplate.add( 'statictext', undefined, 'Template' );
+		d.stTemplate.helpTip = 'Select template to use'; 
+        
+         d.hidden6 = l.grpTemplate.add( 'edittext' );
+		d.hidden6.preferredSize.width = 1;
+		d.hidden6.visible = showHidden;
+     
+		d.ddTemplate = l.grp4Info.grpRight.add( 'dropdownlist' );
+		d.ddTemplate.helpTip = 'Select template to use';
+		d.ddTemplate.preferredSize.width = actionDropDownLength * 2;
+        ////////////////////////////////////////////////////////////////////////////   
 
 		d.cbIncludeICC = l.grp4.grpRight.add( 'checkbox', undefined, strICC );
 		d.cbIncludeICC.helpTip = strICCHelp;

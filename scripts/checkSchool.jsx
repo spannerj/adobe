@@ -1,7 +1,5 @@
 ﻿var errorArray = [];
 
-//folder_check('C:\\Users\\Sam\\Desktop\\Compton', 6);
-
 g_FolderCheck = {
     
     folderCheck: function(schoolPath, imageCount){         
