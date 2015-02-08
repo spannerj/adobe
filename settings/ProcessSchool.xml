@@ -30,4 +30,5 @@
 	<icc>true</icc>
 	<keepstructure>false</keepstructure>
 	<watermark>Return by Monday</watermark>
+	<template>A4Template.indd</template>
 </ProcessSchool>

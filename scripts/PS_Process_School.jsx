@@ -1014,6 +1014,7 @@ function ImageProcessor() {
 		p["info"] = d.etCopyrightInfo.text;
          p["watermark"] = d.etWatermark.text;
 		p["icc"] = d.cbIncludeICC.value;
+         p["template"] = d.ddTemplate.selection.text;
 	}
 	
 	// routine for running the dialog and it's interactions
@@ -1300,8 +1301,28 @@ function ImageProcessor() {
 		}
     
          //populate template drop down using file names in tempates folder
-         
-
+          var templateFolder = new Folder('C:\\Adobe\\templates');
+          
+          //get all templates
+          var templateArray = templateFolder.getFiles();    
+          
+          //populate template drop down
+          for ( var i = 0; i < templateArray.length; i++ ) {
+              this.dlgMain.ddTemplate.add( "item", templateArray[i].name);
+          }   
+      
+          //show the stored template value (if present)
+          var index = 0
+          for ( var i = 0; i < templateArray.length; i++ ) {
+              if ( templateArray[ i ].name == this.params["template"] ) { 
+                  index = i;
+                  break; 
+              }
+          }
+          if ( templateArray.length > 0 ) {
+              templateArray[ index ].selected = true;
+          }       
+ 
 		if ( this.actionInfo.length > 0 ) {
 			for ( var i = 0; i < this.actionInfo.length; i++ ) {
 				this.dlgMain.ddSet.add( "item", this.actionInfo[i].name );
