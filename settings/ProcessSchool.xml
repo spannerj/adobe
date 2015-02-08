@@ -2,7 +2,7 @@
 	<version>1</version>
 	<useopen>false</useopen>
 	<includesub>true</includesub>
-	<source>C:\Users\Sam\Desktop\Compto4</source>
+	<source>C:\Users\Sam\Desktop\Compton</source>
 	<open>false</open>
 	<saveinsame>true</saveinsame>
 	<dest></dest>
@@ -12,7 +12,7 @@
 	<lzw>false</lzw>
 	<converticc>false</converticc>
 	<q>3</q>
-	<imagecount>4</imagecount>
+	<imagecount>6</imagecount>
 	<max>true</max>
 	<jpegresize>false</jpegresize>
 	<jpegw></jpegw>
@@ -30,5 +30,5 @@
 	<icc>true</icc>
 	<keepstructure>false</keepstructure>
 	<watermark>Return by Monday</watermark>
-	<template>Secondary proof template.indd</template>
+	<template>A4Template.indd</template>
 </ProcessSchool>

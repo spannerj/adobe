@@ -195,7 +195,9 @@ function Processor() {
 
     this.exportPDF = function(){
         //export finished doc
-        app.activeDocument.exportFile (ExportFormat.PDF_TYPE, File(this.params['outputfolder'] + "\\"+this.params['ref']+".pdf"), false, "Press Quality");
+        var outputFolder = new Folder( this.params["source"] + '//Output'   + '//' + this.params['classname'] );
+        if (!outputFolder.exists) outputFolder.create();
+        app.activeDocument.exportFile (ExportFormat.PDF_TYPE, File(outputFolder + "\\"+this.params['ref']+".pdf"), false, "Press Quality");
         app.activeDocument.close(SaveOptions.no); 
     }
 
