@@ -89,7 +89,9 @@ function Processor() {
                           var pupilFolder = new Folder(pupilArray[j]);
                           this.params['jpgfolder']  = pupilFolder.getFiles("JPEG");         
                           
-                          app.open("C:\\Adobe\\templates\\A4Template.indd");  
+                          var templatePath = "C:\\Adobe\\templates\\" + this.params["template"];
+                          templatePath =  templatePath.replace(/%20/g, ' ') 
+                          app.open( templatePath);  
                           
                           //loop over pictures placing them in the template
                           this.processFiles ();

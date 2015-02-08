@@ -5,10 +5,11 @@ g_ProcessSchool = {
         return main ();
     }
 };
-main();
+
 function main(){
     $.evalFile(new File("c:/Adobe/scripts/readXML.jsx"));
     $.evalFile(new File("c:/Adobe/scripts/initParms.jsx"));
+    $.evalFile(new File("c:/Adobe/scripts/checkSchoolWithoutJPEG.jsx"));
 
     // on localized builds we pull the $$$/Strings from a .dat file, see documentation for more details
     $.localize = true;
@@ -24,18 +25,27 @@ function main(){
             gShortFileNameLength = gShortFileNameLengthWin;
         }
 
+        //initialise the object
         var gIP = new ImageProcessor();
-
+        
+        //read in settings from the xml file
         gIP.params = g_script_XMLFunctions.ReadXMLFile(gIP.params, strTitle);
 
+        //build the dialog box
         gIP.CreateDialog();
         
         if ( gRunButtonID == gIP.RunDialog() ) {
 
+            //save the dialog settings to file
             gIP.SaveParamsToDisk( GetDefaultParamsFile() );
 
+            //check right number of images are in each folder
+            if ( g_FolderCheckWithoutJPEG.folderCheck( gIP.params["source"], gIP.params["imagecount"] ) )  {  return;  }
+
+            //runt the jpeg process
             gIP.Execute();
         
+            //call indesign and create the proof sheet 
             CallIndesign (gIP);
             
         } else {
@@ -89,7 +99,7 @@ function CallIndesign(){
         alert("Error parsing the file: " + error.description);
     }
     var bt = new BridgeTalk();
-    bt.target = "indesign";
+    bt.target = "indesign-10.064";
     bt.body = message;
     bt.onError = function (btObj) {
         var errorCode = parseInt (btObj.headers ["Error-Code"]);
@@ -1308,21 +1318,12 @@ function ImageProcessor() {
           
           //populate template drop down
           for ( var i = 0; i < templateArray.length; i++ ) {
-              this.dlgMain.ddTemplate.add( "item", templateArray[i].name);
+              this.dlgMain.ddTemplate.add( "item", templateArray[i].name.replace(/%20/g, ' ') );
           }   
       
-          //show the stored template value (if present)
-          var index = 0
-          for ( var i = 0; i < templateArray.length; i++ ) {
-              if ( templateArray[ i ].name == this.params["template"] ) { 
-                  index = i;
-                  break; 
-              }
-          }
-          if ( templateArray.length > 0 ) {
-              templateArray[ index ].selected = true;
-          }       
- 
+          //set the display values for the drop down
+          this.dlgMain.SetDropDown( this.dlgMain.ddTemplate, this.params["template"] );
+          
 		if ( this.actionInfo.length > 0 ) {
 			for ( var i = 0; i < this.actionInfo.length; i++ ) {
 				this.dlgMain.ddSet.add( "item", this.actionInfo[i].name );

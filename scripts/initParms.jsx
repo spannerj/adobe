@@ -40,5 +40,6 @@ function initialiseParmeters() {
 		params["icc"] = true;
 		params["keepstructure"] = false;
          params["watermark"] = "Return by";
+         params["template"] = "";
 		return params;
 }
