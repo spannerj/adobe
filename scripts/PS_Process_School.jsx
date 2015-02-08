@@ -1298,6 +1298,9 @@ function ImageProcessor() {
 			d.ddSet.enabled = this.value;
 			d.ddAction.enabled = this.value;
 		}
+    
+         //populate template drop down using file names in tempates folder
+         
 
 		if ( this.actionInfo.length > 0 ) {
 			for ( var i = 0; i < this.actionInfo.length; i++ ) {
