@@ -1,0 +1,17 @@
+Add the Process_Class.jsx file to C:\Program Files\Adobe\Adobe Photoshop CC 2014\Presets\Scripts
+Add all the other .jsx files to C:\Adobe\scripts
+
+You will need to start with a folder structure like:
+
+School/Edited/
+
+All the class jpgs should be directly in the Edited folder. 
+
+When you run the Process Class script from PS you should see an 'Online by' and a 'Return by' edit box to enter your dates in.
+Also make sure the first time you run it the sub folders check box is checked.
+
+Once you have run the script and it should look like the Example school set up.
+The only difference is the folder names haven't changed yet.
+
+I haven't massively tested it but it's 3.30am and I think it's working. Give it a go and if it isn't i'll fix it tomorrow night.
+
